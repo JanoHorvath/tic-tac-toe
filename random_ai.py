@@ -7,7 +7,7 @@ class Randomer:
         pass
 
     def move(self, board):
-        x = random.randint(0, 100)
-        y = random.randint(0, 100)
+        x = random.randint(-10, 10)
+        y = random.randint(-10, 10)
 
         return x, y
