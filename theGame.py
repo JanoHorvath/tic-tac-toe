@@ -1,3 +1,6 @@
+import horizontal_ai    as ai1
+import random_ai        as ai2
+
 class Player:
     """ Simple player object. Stores name & symbol attributes."""
 
@@ -15,8 +18,9 @@ class TheGame:
         player1 = Player('cross', 'X')
         player2 = Player('nought', 'O')
 
-        player1.ai = None  # Define your AI here
-        player2.ai = None  # Define your AI here
+        # Define your AIs here
+        player1.ai = ai1.HorizontalDummy()
+        player2.ai = ai2.Randomer()
 
         print 'The game begins! Brace yourselves.'
         self.game_engine(player1, player2)  # Cross starts
@@ -45,8 +49,7 @@ class TheGame:
         print "[ {0} ] check_win".format(player.name)
 
         """ Horizontal check """
-        startX = x - 4
-        print 'Checking horizontal. From: {0}'.format(startX)
+        startX = x - 5
         count = 0
         for i in range(1, 10):
             if self.whats_on(startX + i, y) == player.symbol:
@@ -58,8 +61,7 @@ class TheGame:
                 self.the_end(player)
 
         """ Vertical check """
-        startY = y - 4
-        print 'Checking vertical. From: {0}'.format(startY)
+        startY = y - 5
         count = 0
         for i in range(1, 10):
             if self.whats_on(x, startY + i) == player.symbol:
@@ -71,9 +73,8 @@ class TheGame:
                 self.the_end(player)
 
         """ Diagonal \ check """
-        startX = x + 4
-        startY = y - 4
-        print 'Checking \ diagonal. From: {0},{1}'.format(startX, startY)
+        startX = x + 5
+        startY = y - 5
         count = 0
         for i in range(1, 10):
             if self.whats_on(startX - i, startY + i) == player.symbol:
@@ -85,9 +86,8 @@ class TheGame:
                 self.the_end(player)
 
         """ Diagonal / check """
-        startX = x - 4
-        startY = y - 4
-        print 'Checking / diagonal. From: {0},{1}'.format(startX, startY)
+        startX = x - 5
+        startY = y - 5
         count = 0
         for i in range(1, 10):
             if self.whats_on(startX + i, startY + i) == player.symbol:
