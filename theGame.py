@@ -42,7 +42,7 @@ class TheGame:
 
     def the_end(self, winner):
         print "[ {0} ] won! End of game :)".format(winner.name)
-        exit()
+        raise ValueError('End of game')
 
     def check_win(self, player, x, y):
         """ Checks, whether x,y is a winning move for player"""
