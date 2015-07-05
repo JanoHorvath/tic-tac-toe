@@ -216,6 +216,7 @@ class TheGame:
         self.check_win()
 
     def render(self):
+        self.canvas.delete('all')
         for field in self.board:
             if field == 'last_move':
                 pass
