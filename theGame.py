@@ -29,7 +29,7 @@ class TheGame:
         self.player2 = Player('nought', 'O')
 
         # Define your AIs here
-        # self.player1.ai = ai1.HorizontalDummy()
+        self.player1.ai = ai2.Randomer()
         self.player2.ai = ai1.HorizontalDummy()
 
         self.showVisual = showVisual
@@ -104,7 +104,8 @@ class TheGame:
             print "[ {0} ] played a move at: {1},{2}".format(player.name, x, y)
 
     def the_end(self, winner):
-        self.render()
+        if self.showVisual:
+            self.render()
         print "[ {0} ] won! End of game :)".format(winner.name)
         raise GameOver()
 
