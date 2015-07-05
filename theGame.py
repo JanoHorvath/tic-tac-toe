@@ -47,14 +47,18 @@ class TheGame:
 
         def human_move(event):
             try:
-                x = event.x - event.x%10
-                y = event.y - event.y%10
-                self.graphic_game_engine(self.player1, (x,y))
+                x = (event.x - event.x%10 - 250)/10
+                y = (event.y + 10 - event.y%10 - 250)/10
+                self.graphic_game_engine(self.player1, (x, y))
+                ai2_move(self)
             except InvalidMove:
-                print 'Invalid move! Try again!'
+                print 'Invalid move on ({0},{1}). Try again!'.format(x, y)
             except GameOver:
                 print "Game finished."
-                tk_app.destroy()
+                tk_app.bind("<Button-1>", close_window)
+
+        def close_window(event):
+            tk_app.destroy()
 
         self.canvas.bind("<Button-1>", human_move)
 
@@ -72,10 +76,10 @@ class TheGame:
                 print "Game finished."
                 this.tk_app.destroy()
 
-        player1_move_button = Tkinter.Button(tk_app,
+        ai1_move_button = Tkinter.Button(tk_app,
                                                   text="AI1 make a move",
                                                   command=lambda: ai1_move(self)).grid(row=1, column=1)
-        player2_move_button = Tkinter.Button(tk_app,
+        ai2_move_button = Tkinter.Button(tk_app,
                                                   text="AI2 make a move",
                                                   command=lambda: ai2_move(self)).grid(row=2, column=1)
 
@@ -170,8 +174,8 @@ class TheGame:
 
     def graphic_game_engine(self, current_player, human_move):
         if human_move:
-            if self.whats_on(human_move[0], human_move[1]) is None:
-                raise InvalidMove('Try again!')
+            if self.whats_on(human_move[0], human_move[1]) is not None:
+                raise InvalidMove()
             else:
                 x = human_move[0]
                 y = human_move[1]
@@ -182,11 +186,12 @@ class TheGame:
 
         self.make_move(current_player, x, y)
 
+        self.render()
+
         self.check_win(current_player, x, y)
 
     def render(self):
         for field in self.board:
-            print field
             self.canvas.create_text(field[0]*10+250, field[1]*10+250, text=self.board.get(field))
 
 
