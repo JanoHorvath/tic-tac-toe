@@ -23,13 +23,14 @@ class TheGame:
 
     def __init__(self, showVisual):
         self.board = {}
+        self.victoriousFields = []
 
         self.player1 = Player('cross', 'X')
         self.player2 = Player('nought', 'O')
 
         # Define your AIs here
-        self.player1.ai = ai1.HorizontalDummy()
-        self.player2.ai = ai2.Randomer()
+        # self.player1.ai = ai1.HorizontalDummy()
+        self.player2.ai = ai1.HorizontalDummy()
 
         self.showVisual = showVisual
         if self.showVisual:
@@ -67,14 +68,14 @@ class TheGame:
                 self.graphic_game_engine(self.player1, None)
             except GameOver:
                 print "Game finished."
-                this.tk_app.destroy()
+                tk_app.bind("<Button-1>", close_window)
 
         def ai2_move(this):
             try:
                 self.graphic_game_engine(self.player2, None)
             except GameOver:
                 print "Game finished."
-                this.tk_app.destroy()
+                tk_app.bind("<Button-1>", close_window)
 
         ai1_move_button = Tkinter.Button(tk_app,
                                                   text="AI1 make a move",
@@ -103,6 +104,7 @@ class TheGame:
             print "[ {0} ] played a move at: {1},{2}".format(player.name, x, y)
 
     def the_end(self, winner):
+        self.render()
         print "[ {0} ] won! End of game :)".format(winner.name)
         raise GameOver()
 
@@ -120,6 +122,8 @@ class TheGame:
                 count = 0
 
             if count == 5:
+                for j in range(1, i+1):
+                    self.victoriousFields.append((startX + j, y))
                 self.the_end(player)
 
         """ Vertical check """
@@ -132,6 +136,8 @@ class TheGame:
                 count = 0
 
             if count == 5:
+                for j in range(1, i+1):
+                    self.victoriousFields.append((x, startY + j))
                 self.the_end(player)
 
         """ Diagonal \ check """
@@ -145,6 +151,8 @@ class TheGame:
                 count = 0
 
             if count == 5:
+                for j in range(1, i+1):
+                    self.victoriousFields.append((startX - j, startY + j))
                 self.the_end(player)
 
         """ Diagonal / check """
@@ -158,6 +166,8 @@ class TheGame:
                 count = 0
 
             if count == 5:
+                for j in range(0, i+1):
+                    self.victoriousFields.append((startX + j, startY + j))
                 self.the_end(player)
 
     def game_engine(self, current_player, other_player):
@@ -192,7 +202,12 @@ class TheGame:
 
     def render(self):
         for field in self.board:
-            self.canvas.create_text(field[0]*10+250, field[1]*10+250, text=self.board.get(field))
+            if (field[0], field[1]) in self.victoriousFields:
+                color = 'red'
+            else:
+                color = 'black'
+
+            self.canvas.create_text(field[0]*10+250, field[1]*10+250, text=self.board.get(field), fill=color)
 
 
 def run_it(repetitions, showVisual):
