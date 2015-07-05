@@ -3,6 +3,8 @@ import pickle
 import horizontal_ai    as ai1
 import random_ai        as ai2
 
+GAME_LOG_PATH = 'last_game_log.pkl'
+
 class GameOver(Exception):
     pass
 
@@ -89,9 +91,14 @@ class TheGame:
                                     text="This is TIC TAC TOE",
                                     justify='left').grid(row=0, column=1, sticky='s')
 
+        log_button = Tkinter.Button(tk_app,
+                                                  text="LOG this state",
+                                                  command=lambda: save_board_to_file(self.board)).grid(row=3, column=1)
+
         if self.board:
             try:
                 self.check_win()
+                self.render()
             except GameOver:
                 tk_app.bind("<Button-1>", close_window)
 
@@ -229,7 +236,7 @@ class TheGame:
                 self.canvas.create_text(field[0]*10+250, field[1]*10+250, text=self.board.get(field), fill=color)
 
 def save_board_to_file(obj):
-    with open('last_game_log.pkl', 'wb') as f:
+    with open(GAME_LOG_PATH, 'wb') as f:
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
 def run_it(repetitions, showVisual):
