@@ -1,4 +1,5 @@
 import Tkinter
+import pickle
 import horizontal_ai    as ai1
 import random_ai        as ai2
 
@@ -21,8 +22,8 @@ class Player:
 class TheGame:
     """ The Game. Provides interface to play tic-tac-toe. Board is stored in a tuple dictionary e.g. (-3,100) => 'X' """
 
-    def __init__(self, showVisual):
-        self.board = {}
+    def __init__(self, board, showVisual):
+        self.board = board
         self.victoriousFields = []
 
         self.player1 = Player('cross', 'X')
@@ -58,10 +59,10 @@ class TheGame:
                 print "Game finished."
                 tk_app.bind("<Button-1>", close_window)
 
+        self.canvas.bind("<Button-1>", human_move)
+
         def close_window(event):
             tk_app.destroy()
-
-        self.canvas.bind("<Button-1>", human_move)
 
         def ai1_move(this):
             try:
@@ -88,6 +89,12 @@ class TheGame:
                                     text="This is TIC TAC TOE",
                                     justify='left').grid(row=0, column=1, sticky='s')
 
+        if self.board:
+            try:
+                self.check_win()
+            except GameOver:
+                tk_app.bind("<Button-1>", close_window)
+
     def whats_on(self, x, y):
         """ Returns symbol on (x, y) if there is one, None otherwise. """
         try:
@@ -101,16 +108,23 @@ class TheGame:
         """ Adds player's symbol to the board, if that spot is empty. """
         if self.whats_on(x, y) is None:
             self.board[(x, y)] = player.symbol
+            self.board['last_move'] = (x, y, player)
             print "[ {0} ] played a move at: {1},{2}".format(player.name, x, y)
 
     def the_end(self, winner):
         if self.showVisual:
             self.render()
         print "[ {0} ] won! End of game :)".format(winner.name)
+        save_board_to_file(self.board)
         raise GameOver()
 
-    def check_win(self, player, x, y):
-        """ Checks, whether x,y is a winning move for player"""
+    def check_win(self):
+        """ Checks, if the last move made is a winning move (= whether x,y is a winning move for player)"""
+
+        x = self.board['last_move'][0]
+        y = self.board['last_move'][1]
+        player = self.board['last_move'][2]
+
         print "[ {0} ] check_win".format(player.name)
 
         """ Horizontal check """
@@ -179,7 +193,7 @@ class TheGame:
 
         self.make_move(current_player, x, y)
 
-        self.check_win(current_player, x, y)
+        self.check_win()
 
         self.game_engine(other_player, current_player)
 
@@ -199,21 +213,34 @@ class TheGame:
 
         self.render()
 
-        self.check_win(current_player, x, y)
+        self.check_win()
 
     def render(self):
         for field in self.board:
-            if (field[0], field[1]) in self.victoriousFields:
-                color = 'red'
+            if field == 'last_move':
+                pass
             else:
-                color = 'black'
+                if (field[0], field[1]) in self.victoriousFields:
+                    color = 'red'
+                else:
+                    color = 'black'
 
-            self.canvas.create_text(field[0]*10+250, field[1]*10+250, text=self.board.get(field), fill=color)
+                self.canvas.create_text(field[0]*10+250, field[1]*10+250, text=self.board.get(field), fill=color)
 
+def save_board_to_file(obj):
+    with open('last_game_log.pkl', 'wb') as f:
+        pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
 
 def run_it(repetitions, showVisual):
     for i in range(1, repetitions+1):
         try:
-            TheGame(showVisual)
+            TheGame({}, showVisual)
         except GameOver:
             print "Game {0} finished. ".format(i)
+
+def load_existing(board):
+    try:
+        TheGame(board, True).check_win()
+    except Exception:
+        pass
+
