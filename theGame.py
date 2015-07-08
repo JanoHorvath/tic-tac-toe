@@ -224,6 +224,10 @@ class TheGame:
 
     def render(self):
         self.canvas.delete('all')
+
+        self.player1.ai.render(self.canvas)
+        self.player2.ai.render(self.canvas)
+
         for field in self.board:
             if field == 'last_move':
                 pass
@@ -234,8 +238,6 @@ class TheGame:
                     color = 'black'
 
                 self.canvas.create_text(field[0]*10+250, field[1]*10+250, text=self.board.get(field), fill=color)
-        self.player1.ai.render(self.canvas)
-        self.player2.ai.render(self.canvas)
 
 def save_board_to_file(obj):
     with open(GAME_LOG_PATH, 'wb') as f:
