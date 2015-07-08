@@ -8,3 +8,6 @@ class HorizontalDummy:
         self.x += 1
 
         return self.x, 0
+
+    def render(self, canvas):
+        pass

@@ -11,3 +11,6 @@ class Randomer:
         y = random.randint(-10, 10)
 
         return x, y
+
+    def render(self, canvas):
+        pass
