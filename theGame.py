@@ -2,6 +2,7 @@ import Tkinter
 import pickle
 import horizontal_ai    as ai1
 import random_ai        as ai2
+import jano_ai          as jano_ai
 
 GAME_LOG_PATH = 'last_game_log.pkl'
 
@@ -33,7 +34,7 @@ class TheGame:
 
         # Define your AIs here
         self.player1.ai = ai2.Randomer()
-        self.player2.ai = ai1.HorizontalDummy()
+        self.player2.ai = jano_ai.MinMax(self.player2.symbol)
 
         self.showVisual = showVisual
         if self.showVisual:
@@ -122,7 +123,7 @@ class TheGame:
         if self.showVisual:
             self.render()
         print "[ {0} ] won! End of game :)".format(winner.name)
-        save_board_to_file(self.board)
+        # save_board_to_file(self.board)
         raise GameOver()
 
     def check_win(self):
@@ -213,7 +214,9 @@ class TheGame:
                 y = human_move[1]
         else:
             while True:
-                x, y = current_player.ai.move(self.board)
+                coordinates = current_player.ai.move(self.board, self.whats_on)
+                x = coordinates[0]
+                y = coordinates[1]
                 if self.whats_on(x, y) is None: break
 
         self.make_move(current_player, x, y)
